@@ -31,10 +31,10 @@
         sec_layer {
             label = "Sec";
             bindings = <
-                &trans         /* Encoder push (top-left) */
-                &kp N1          /* Key 1 - Play/Pause      */
-                &kp N2          /* Key 2 - Next Track      */
-                &kp C_RESET          /* Key 3 - Prev Track      */
+                &trans
+                &kp N1
+                &kp N2
+                &bootloader
             >;
 
             sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
