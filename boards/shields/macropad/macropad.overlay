@@ -72,8 +72,8 @@
 
     /* ── Rotary encoder ─────────────────────────────────────────
      *
-     *  A → D21  (&pro_micro 21  =  P0.31)
-     *  B → D20  (&pro_micro 20  =  P0.29)
+     *  A → D20  (&pro_micro 21  =  P0.31)
+     *  B → D21  (&pro_micro 20  =  P0.29)
      *
      *  The encoder push switch sits at RC(0,0) in the matrix above.
      */
@@ -81,8 +81,8 @@
         compatible = "alps,ec11";
         label = "ENCODER_0";
 
-        a-gpios = <&pro_micro 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D21 */
-        b-gpios = <&pro_micro 20 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D20 */
+        a-gpios = <&pro_micro 20 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D21 */
+        b-gpios = <&pro_micro 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D20 */
 
         steps = <80>;   /* pulses per revolution – tune to your encoder */
         status = "okay";
