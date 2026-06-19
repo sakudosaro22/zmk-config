@@ -19,7 +19,7 @@
         default_layer {
             label = "Default";
             bindings = <
-                &kp C_MUTE          /* Encoder push (top-left) */
+                &lt 1 C_MUTE          /* Encoder push (top-left) */
                 &kp C_PP            /* Key 1 - Play/Pause      */
                 &kp C_PREV          /* Key 2 - Next Track      */
                 &kp C_NEXT          /* Key 3 - Prev Track      */
@@ -27,6 +27,19 @@
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
+
+        sec_layer {
+            label = "Sec";
+            bindings = <
+                &trans          /* Encoder push (top-left) */
+                &kp 1            /* Key 1 - Play/Pause      */
+                &kp 2          /* Key 2 - Next Track      */
+                &kp 3          /* Key 3 - Prev Track      */
+            >;
+
+            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
+        };
+
 
         /*
          * Hold any key + encoder push to switch to this layer
