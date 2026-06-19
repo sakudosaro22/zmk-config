@@ -34,7 +34,7 @@
                 &trans         /* Encoder push (top-left) */
                 &kp N1          /* Key 1 - Play/Pause      */
                 &kp N2          /* Key 2 - Next Track      */
-                &kp N3          /* Key 3 - Prev Track      */
+                &kp C_RESET          /* Key 3 - Prev Track      */
             >;
 
             sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
