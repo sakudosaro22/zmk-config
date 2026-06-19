@@ -32,8 +32,8 @@
             label = "Sec";
             bindings = <
                 &trans
-                &kp N1
-                &kp N2
+                &bt BT_CLR
+                &bt BT_NXT
                 &bootloader
             >;
 
