@@ -1,0 +1,11 @@
+file_format: "1"
+id: macropad
+name: Macropad (3-key + encoder)
+type: shield
+url: https://github.com/yourname/zmk-macropad
+requires:
+  - nice_nano_v2
+exposes: []
+features:
+  - keys
+  - encoder

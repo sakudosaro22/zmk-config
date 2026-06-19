@@ -1,0 +1,96 @@
+/*
+ * Macropad Shield Overlay
+ * Hardware: Nice!Nano v2
+ * Layout: 1x rotary encoder (top-left) + 3x MX switches (bottom row)
+ *
+ * Wiring:
+ *   Rows:    Row0 (encoder row) → D3 | Row1 (key row) → D2
+ *   Columns: Col0 → D4 | Col1 → D5 | Col2 → D6
+ *   Encoder: A → D21 | B → D20  (push button is at R0,C0 in matrix)
+ *
+ * Matrix layout:
+ *        Col0    Col1    Col2
+ *  Row0  [ENC]   [    ]  [    ]   ← only RC(0,0) is wired (encoder push)
+ *  Row1  [ K1]   [ K2 ]  [ K3 ]
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
+
+/ {
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,matrix_transform = &default_transform;
+    };
+
+    /* ── Key matrix (GPIO matrix scan) ─────────────────────────
+     *
+     *  ROW pins (output / driven):
+     *    Row 0  →  D3  (&pro_micro 3)
+     *    Row 1  →  D2  (&pro_micro 2)
+     *
+     *  COL pins (input / sense):
+     *    Col 0  →  D4  (&pro_micro 4)
+     *    Col 1  →  D5  (&pro_micro 5)
+     *    Col 2  →  D6  (&pro_micro 6)
+     *
+     *  Wire diodes cathode-to-row (COL2ROW) as usual.
+     */
+    kscan0: kscan {
+        compatible = "zmk,kscan-gpio-matrix";
+        label = "KSCAN";
+        diode-direction = "col2row";
+
+        row-gpios
+            = <&pro_micro 3 GPIO_ACTIVE_HIGH>   /* Row 0 – D3 (encoder push row) */
+            , <&pro_micro 2 GPIO_ACTIVE_HIGH>   /* Row 1 – D2 (key row)          */
+            ;
+
+        col-gpios
+            = <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   /* Col 0 – D4 */
+            , <&pro_micro 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   /* Col 1 – D5 */
+            , <&pro_micro 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   /* Col 2 – D6 */
+            ;
+    };
+
+    /* ── Matrix transform ───────────────────────────────────────
+     *
+     *  Physical layout mapped to keymap positions:
+     *
+     *    RC(0,0)                        ← encoder push (top-left)
+     *    RC(1,0)  RC(1,1)  RC(1,2)     ← K1  K2  K3
+     */
+    default_transform: matrix_transform {
+        compatible = "zmk,matrix-transform";
+        columns = <3>;
+        rows    = <2>;
+
+        map = <
+            RC(0,0)
+            RC(1,0) RC(1,1) RC(1,2)
+        >;
+    };
+
+    /* ── Rotary encoder ─────────────────────────────────────────
+     *
+     *  A → D21  (&pro_micro 21  =  P0.31)
+     *  B → D20  (&pro_micro 20  =  P0.29)
+     *
+     *  The encoder push switch sits at RC(0,0) in the matrix above.
+     */
+    encoder_0: encoder_0 {
+        compatible = "alps,ec11";
+        label = "ENCODER_0";
+
+        a-gpios = <&pro_micro 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D21 */
+        b-gpios = <&pro_micro 20 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D20 */
+
+        steps = <80>;   /* pulses per revolution – tune to your encoder */
+        status = "okay";
+    };
+
+    sensors {
+        compatible = "zmk,keymap-sensors";
+        sensors    = <&encoder_0>;
+        triggers-per-rotation = <20>;
+    };
+};
