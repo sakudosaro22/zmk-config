@@ -13,8 +13,8 @@
  *  Row0  [ENC]   [    ]  [    ]   ← only RC(0,0) is wired (encoder push)
  *  Row1  [ K1]   [ K2 ]  [ K3 ]
  */
-
 #include <dt-bindings/zmk/matrix_transform.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
 
 / {
     chosen {
@@ -39,12 +39,10 @@
         compatible = "zmk,kscan-gpio-matrix";
         label = "KSCAN";
         diode-direction = "row2col";
-
         row-gpios
             = <&pro_micro 3 GPIO_ACTIVE_HIGH>   /* Row 0 – D3 (encoder push row) */
             , <&pro_micro 2 GPIO_ACTIVE_HIGH>   /* Row 1 – D2 (key row)          */
             ;
-
         col-gpios
             = <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   /* Col 0 – D4 */
             , <&pro_micro 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   /* Col 1 – D5 */
@@ -63,7 +61,6 @@
         compatible = "zmk,matrix-transform";
         columns = <3>;
         rows    = <2>;
-
         map = <
             RC(0,0)
             RC(1,0) RC(1,1) RC(1,2)
@@ -80,10 +77,8 @@
     encoder_0: encoder_0 {
         compatible = "alps,ec11";
         label = "ENCODER_0";
-
         a-gpios = <&pro_micro 20 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D21 */
         b-gpios = <&pro_micro 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D20 */
-
         steps = <80>;   /* pulses per revolution – tune to your encoder */
         status = "okay";
     };
@@ -93,28 +88,39 @@
         sensors    = <&encoder_0>;
         triggers-per-rotation = <20>;
     };
+};
 
-    &pinctrl {
-        i2c0_default: i2c0_default {
-            group1 {
-                psels = <NRF_PSEL(TWIM_SDA, 0, 13)>, <NRF_PSEL(TWIM_SCL, 0, 15)>;
-            };
-        };
-
-        i2c0_sleep: i2c0_sleep {
-            group1 {
-                psels = <NRF_PSEL(TWIM_SDA, 0, 13)>, <NRF_PSEL(TWIM_SCL, 0, 15)>;
-                low-power-enable;
-            };
+/* ── I2C OLED display ────────────────────────────────────────────
+ *
+ *  SDA → D0 (&pro_micro 0)
+ *  SCL → D1 (&pro_micro 1)
+ *  VCC → 3.3V
+ *  GND → GND
+ *
+ *  These pin/label blocks must live OUTSIDE the root "/ { ... }"
+ *  node, as top-level overrides of existing nodes.
+ */
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 13)>, <NRF_PSEL(TWIM_SCL, 0, 15)>;
         };
     };
 
-    &i2c0 {
-        compatible = "nordic,nrf-twim";
-        status = "okay";
-        pinctrl-0 = <&i2c0_default>;
-        pinctrl-1 = <&i2c0_sleep>;
-        pinctrl-names = "default", "sleep";
+    i2c0_sleep: i2c0_sleep {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 13)>, <NRF_PSEL(TWIM_SCL, 0, 15)>;
+            low-power-enable;
+        };
+    };
+};
+
+&i2c0 {
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    pinctrl-0 = <&i2c0_default>;
+    pinctrl-1 = <&i2c0_sleep>;
+    pinctrl-names = "default", "sleep";
 
     oled: ssd1306@3c {
         compatible = "solomon,ssd1306fb";
