@@ -4,9 +4,10 @@
  * Layout: 1x rotary encoder (top-left) + 3x MX switches (bottom row)
  *
  * Wiring:
- *   Rows:    Row0 (encoder row) → D3 | Row1 (key row) → D2
+ *   Rows:    Row0 (encoder row) → D7 | Row1 (key row) → D8
  *   Columns: Col0 → D4 | Col1 → D5 | Col2 → D6
  *   Encoder: A → D21 | B → D20  (push button is at R0,C0 in matrix)
+ *   OLED:    SDA → D2 | SCL → D3  (board's built-in hardware I2C bus)
  *
  * Matrix layout:
  *        Col0    Col1    Col2
@@ -26,8 +27,8 @@
     /* ── Key matrix (GPIO matrix scan) ─────────────────────────
      *
      *  ROW pins (output / driven):
-     *    Row 0  →  D3  (&pro_micro 3)
-     *    Row 1  →  D2  (&pro_micro 2)
+     *    Row 0  →  D0  (&pro_micro 7)
+     *    Row 1  →  D1  (&pro_micro 8)
      *
      *  COL pins (input / sense):
      *    Col 0  →  D4  (&pro_micro 4)
@@ -35,14 +36,17 @@
      *    Col 2  →  D6  (&pro_micro 6)
      *
      *  Wire diodes cathode-to-row (ROW2COL) as usual.
+     *
+     *  NOTE: rows moved off D2/D3 to free up the board's hardware
+     *  I2C bus for the OLED display.
      */
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         label = "KSCAN";
         diode-direction = "row2col";
         row-gpios
-            = <&pro_micro 3 GPIO_ACTIVE_HIGH>   /* Row 0 – D3 (encoder push row) */
-            , <&pro_micro 2 GPIO_ACTIVE_HIGH>   /* Row 1 – D2 (key row)          */
+            = <&pro_micro 0 GPIO_ACTIVE_HIGH>   /* Row 0 – D7 (encoder push row) */
+            , <&pro_micro 1 GPIO_ACTIVE_HIGH>   /* Row 1 – D8 (key row)          */
             ;
         col-gpios
             = <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   /* Col 0 – D4 */
@@ -90,38 +94,29 @@
         triggers-per-rotation = <20>;
     };
 
-    /* ── I2C OLED display (bit-banged / software I2C) ─────────────
-     *
-     *  D0/D1 are NOT the board's fixed hardware I2C pins (those
-     *  are D2/D3, already used by the key matrix rows). Since the
-     *  display is wired to D0 (SDA) / D1 (SCL), we use Zephyr's
-     *  "i2c-gpio" software-emulated I2C driver, which can run on
-     *  any free GPIO pair.
-     *
-     *  D0 = &pro_micro 0  (P0.08) → SDA
-     *  D1 = &pro_micro 1  (P0.06) → SCL
-     */
-    i2c_gpio0: i2c-gpio-0 {
-        compatible = "i2c-gpio";
-        sda-gpios = <&pro_micro 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN | GPIO_PULL_UP)>;
-        scl-gpios = <&pro_micro 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN | GPIO_PULL_UP)>;
-        i2c-gpio,delay-us = <5>;  /* ~100kHz */
-        #address-cells = <1>;
-        #size-cells = <0>;
-        status = "okay";
+};
 
-        oled: ssd1306@3c {
-            compatible = "solomon,ssd1306fb";
-            reg = <0x3c>;
-            width = <128>;
-            height = <64>;
-            segment-offset = <0>;
-            page-offset = <0>;
-            display-offset = <0>;
-            multiplex-ratio = <31>;
-            segment-remap;
-            com-invdir;
-            prechargep = <0x22>;
-        };
+/* ── I2C OLED display ────────────────────────────────────────────
+ *
+ *  Uses the nice!nano v2's built-in hardware I2C bus, exposed via
+ *  the pro_micro_i2c alias. This bus is physically wired to D2
+ *  (SDA) and D3 (SCL) — the same pattern used by every official
+ *  ZMK shield with an OLED (lily58, corne, etc).
+ */
+&pro_micro_i2c {
+    status = "okay";
+
+    oled: ssd1306@3c {
+        compatible = "solomon,ssd1306fb";
+        reg = <0x3c>;
+        width = <128>;
+        height = <64>;
+        segment-offset = <0>;
+        page-offset = <0>;
+        display-offset = <0>;
+        multiplex-ratio = <31>;
+        segment-remap;
+        com-invdir;
+        prechargep = <0x22>;
     };
 };
