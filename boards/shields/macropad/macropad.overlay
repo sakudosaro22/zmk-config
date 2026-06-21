@@ -16,6 +16,7 @@
  */
 #include <dt-bindings/zmk/matrix_transform.h>
 #include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
 
 / {
     chosen {
@@ -27,8 +28,8 @@
     /* ── Key matrix (GPIO matrix scan) ─────────────────────────
      *
      *  ROW pins (output / driven):
-     *    Row 0  →  D0  (&pro_micro 7)
-     *    Row 1  →  D1  (&pro_micro 8)
+     *    Row 0  →  D0  (&pro_micro 0)
+     *    Row 1  →  D1  (&pro_micro 1)
      *
      *  COL pins (input / sense):
      *    Col 0  →  D4  (&pro_micro 4)
@@ -45,8 +46,8 @@
         label = "KSCAN";
         diode-direction = "row2col";
         row-gpios
-            = <&pro_micro 0 GPIO_ACTIVE_HIGH>   /* Row 0 – D7 (encoder push row) */
-            , <&pro_micro 1 GPIO_ACTIVE_HIGH>   /* Row 1 – D8 (key row)          */
+            = <&pro_micro 0 GPIO_ACTIVE_HIGH>   /* Row 0 – D0 (encoder push row) */
+            , <&pro_micro 1 GPIO_ACTIVE_HIGH>   /* Row 1 – D1 (key row)          */
             ;
         col-gpios
             = <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   /* Col 0 – D4 */
@@ -105,10 +106,11 @@
  */
 &pro_micro_i2c {
     status = "okay";
+    clock-frequency = <I2C_BITRATE_STANDARD>;  /* 100kHz, safest for breadboard wiring */
 
     oled: ssd1306@3c {
         compatible = "solomon,ssd1306fb";
-        reg = <0x3b>;
+        reg = <0x3c>;
         width = <128>;
         height = <64>;
         segment-offset = <0>;
