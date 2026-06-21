@@ -4,7 +4,7 @@
  * Layout: 1x rotary encoder (top-left) + 3x MX switches (bottom row)
  *
  * Wiring:
- *   Rows:    Row0 (encoder row) → D7 | Row1 (key row) → D8
+ *   Rows:    Row0 (encoder row) → D0 | Row1 (key row) → D1
  *   Columns: Col0 → D4 | Col1 → D5 | Col2 → D6
  *   Encoder: A → D21 | B → D20  (push button is at R0,C0 in matrix)
  *   OLED:    SDA → D2 | SCL → D3  (board's built-in hardware I2C bus)
@@ -114,7 +114,7 @@
         segment-offset = <0>;
         page-offset = <0>;
         display-offset = <0>;
-        multiplex-ratio = <31>;
+        multiplex-ratio = <63>;
         segment-remap;
         com-invdir;
         prechargep = <0x22>;
