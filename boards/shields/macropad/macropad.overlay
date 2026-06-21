@@ -89,51 +89,39 @@
         sensors    = <&encoder_0>;
         triggers-per-rotation = <20>;
     };
-};
 
-/* ── I2C OLED display ────────────────────────────────────────────
- *
- *  SDA → D0 (&pro_micro 0)
- *  SCL → D1 (&pro_micro 1)
- *  VCC → 3.3V
- *  GND → GND
- *
- *  These pin/label blocks must live OUTSIDE the root "/ { ... }"
- *  node, as top-level overrides of existing nodes.
- */
-&pinctrl {
-    i2c0_default: i2c0_default {
-        group1 {
-            psels = <NRF_PSEL(TWIM_SDA, 0, 15)>, <NRF_PSEL(TWIM_SCL, 0, 13)>;
+    /* ── I2C OLED display (bit-banged / software I2C) ─────────────
+     *
+     *  D0/D1 are NOT the board's fixed hardware I2C pins (those
+     *  are D2/D3, already used by the key matrix rows). Since the
+     *  display is wired to D0 (SDA) / D1 (SCL), we use Zephyr's
+     *  "i2c-gpio" software-emulated I2C driver, which can run on
+     *  any free GPIO pair.
+     *
+     *  D0 = &pro_micro 0  (P0.08) → SDA
+     *  D1 = &pro_micro 1  (P0.06) → SCL
+     */
+    i2c_gpio0: i2c-gpio-0 {
+        compatible = "i2c-gpio";
+        sda-gpios = <&pro_micro 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN | GPIO_PULL_UP)>;
+        scl-gpios = <&pro_micro 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN | GPIO_PULL_UP)>;
+        i2c-gpio,delay-us = <5>;  /* ~100kHz */
+        #address-cells = <1>;
+        #size-cells = <0>;
+        status = "okay";
+
+        oled: ssd1306@3c {
+            compatible = "solomon,ssd1306fb";
+            reg = <0x3c>;
+            width = <128>;
+            height = <64>;
+            segment-offset = <0>;
+            page-offset = <0>;
+            display-offset = <0>;
+            multiplex-ratio = <31>;
+            segment-remap;
+            com-invdir;
+            prechargep = <0x22>;
         };
-    };
-
-    i2c0_sleep: i2c0_sleep {
-        group1 {
-            psels = <NRF_PSEL(TWIM_SDA, 0, 15)>, <NRF_PSEL(TWIM_SCL, 0, 13)>;
-            low-power-enable;
-        };
-    };
-};
-
-&i2c0 {
-    compatible = "nordic,nrf-twim";
-    status = "okay";
-    pinctrl-0 = <&i2c0_default>;
-    pinctrl-1 = <&i2c0_sleep>;
-    pinctrl-names = "default", "sleep";
-
-    oled: ssd1306@3c {
-        compatible = "solomon,ssd1306fb";
-        reg = <0x3b>;
-        width = <128>;
-        height = <64>;
-        segment-offset = <0>;
-        page-offset = <0>;
-        display-offset = <0>;
-        multiplex-ratio = <31>;
-        segment-remap;
-        com-invdir;
-        prechargep = <0x22>;
     };
 };
