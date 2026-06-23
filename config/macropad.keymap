@@ -33,13 +33,25 @@
         bl_layer {
             label = "BL";
             bindings = <
-                &to 0 
+                &to 3 
                 &bt BT_CLR
-                &bt BT_NXT
+                &bt BT_SEL 1
+                &out OUT_TOG
+            >;
+
+            sensor-bindings = <&inc_dec_bt BT_NXT BT_PRV>;
+        };
+
+        dev_layer {
+            label = "dev";
+            bindings = <
+                &to 0 
+                &ext_power
+                &sys_reset
                 &bootloader
             >;
 
-            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
 
 
