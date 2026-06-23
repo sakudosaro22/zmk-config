@@ -1,19 +1,3 @@
-/*
- * Macropad Shield Overlay
- * Hardware: Nice!Nano v2
- * Layout: 1x rotary encoder (top-left) + 3x MX switches (bottom row)
- *
- * Wiring:
- *   Rows:    Row0 (encoder row) → D0 | Row1 (key row) → D1
- *   Columns: Col0 → D4 | Col1 → D5 | Col2 → D6
- *   Encoder: A → D21 | B → D20  (push button is at R0,C0 in matrix)
- *   OLED:    SDA → D2 | SCL → D3  (board's built-in hardware I2C bus)
- *
- * Matrix layout:
- *        Col0    Col1    Col2
- *  Row0  [ENC]   [    ]  [    ]   ← only RC(0,0) is wired (encoder push)
- *  Row1  [ K1]   [ K2 ]  [ K3 ]
- */
 #include <dt-bindings/zmk/matrix_transform.h>
 #include <zephyr/dt-bindings/gpio/gpio.h>
 #include <zephyr/dt-bindings/i2c/i2c.h>
@@ -25,29 +9,13 @@
         zephyr,display = &oled;
     };
 
-    /* ── Key matrix (GPIO matrix scan) ─────────────────────────
-     *
-     *  ROW pins (output / driven):
-     *    Row 0  →  D0  (&pro_micro 0)
-     *    Row 1  →  D1  (&pro_micro 1)
-     *
-     *  COL pins (input / sense):
-     *    Col 0  →  D4  (&pro_micro 4)
-     *    Col 1  →  D5  (&pro_micro 5)
-     *    Col 2  →  D6  (&pro_micro 6)
-     *
-     *  Wire diodes cathode-to-row (ROW2COL) as usual.
-     *
-     *  NOTE: rows moved off D2/D3 to free up the board's hardware
-     *  I2C bus for the OLED display.
-     */
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         label = "KSCAN";
         diode-direction = "row2col";
         row-gpios
-            = <&pro_micro 0 GPIO_ACTIVE_HIGH>   /* Row 0 – D0 (encoder push row) */
-            , <&pro_micro 1 GPIO_ACTIVE_HIGH>   /* Row 1 – D1 (key row)          */
+            = <&pro_micro 0 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 1 GPIO_ACTIVE_HIGH>
             ;
         col-gpios
             = <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   /* Col 0 – D4 */
@@ -56,13 +24,6 @@
             ;
     };
 
-    /* ── Matrix transform ───────────────────────────────────────
-     *
-     *  Physical layout mapped to keymap positions:
-     *
-     *    RC(0,0)                        ← encoder push (top-left)
-     *    RC(1,0)  RC(1,1)  RC(1,2)     ← K1  K2  K3
-     */
     default_transform: matrix_transform {
         compatible = "zmk,matrix-transform";
         columns = <3>;
@@ -73,13 +34,6 @@
         >;
     };
 
-    /* ── Rotary encoder ─────────────────────────────────────────
-     *
-     *  A → D20  (&pro_micro 21  =  P0.31)
-     *  B → D21  (&pro_micro 20  =  P0.29)
-     *
-     *  The encoder push switch sits at RC(0,0) in the matrix above.
-     */
     encoder_0: encoder_0 {
         compatible = "alps,ec11";
         label = "ENCODER_0";

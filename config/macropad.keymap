@@ -24,7 +24,7 @@
                 &kp 2
                 &kp X
                 &kp Y
-                &kp C_SPACE
+                &kp SPACE
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
