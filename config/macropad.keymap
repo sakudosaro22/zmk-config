@@ -30,10 +30,10 @@
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
 
-        sec_layer {
-            label = "sec";
+        bl_layer {
+            label = "BL";
             bindings = <
-                &to 1
+                &to 0 
                 &bt BT_CLR
                 &bt BT_NXT
                 &bootloader
