@@ -7,7 +7,7 @@
         compatible = "zmk,keymap";
 
         default_layer {
-            label = "Media";
+            label = "media";
             bindings = <
                 &lt C_MUTE 1
                 &kp C_PP
@@ -22,8 +22,8 @@
             label = "o3c";
             bindings = <
                 &kp 2
-                &kp C_X
-                &kp C_Y
+                &kp X
+                &kp Y
                 &kp C_SPACE
             >;
 
@@ -31,7 +31,7 @@
         };
 
         sec_layer {
-            label = "Sec";
+            label = "sec";
             bindings = <
                 &kp 1
                 &bt BT_CLR
