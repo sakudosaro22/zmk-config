@@ -32,8 +32,8 @@
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
 
-        bl_layer {
-            label = "BL";
+        bt_layer {
+            label = "BT";
             bindings = <
                 &to 3 
                 &bt BT_CLR
@@ -41,7 +41,7 @@
                 &out OUT_TOG
             >;
 
-            sensor-bindings = <&inc_dec_bt BT_NXT BT_PRV>;
+            sensor-bindings = <&inc_dec_kp BT_NXT BT_PRV>;
         };
 
         dev_layer {
