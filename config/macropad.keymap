@@ -36,7 +36,7 @@
                 &to 3 
                 &bt BT_CLR
                 &bt BT_NXT
-                &out OUT_TOG
+                &bt BT_PRV
             >;
         };
 
