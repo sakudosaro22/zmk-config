@@ -9,7 +9,7 @@
         default_layer {
             label = "media";
             bindings = <
-                &lt C_MUTE 1
+                &to 1
                 &kp C_PP
                 &kp C_PREV 
                 &kp C_NEXT
@@ -21,7 +21,7 @@
         o3c_layer {
             label = "o3c";
             bindings = <
-                &kp 2
+                &to 2
                 &kp X
                 &kp Y
                 &kp SPACE
@@ -33,7 +33,7 @@
         sec_layer {
             label = "sec";
             bindings = <
-                &kp 1
+                &to 1
                 &bt BT_CLR
                 &bt BT_NXT
                 &bootloader
