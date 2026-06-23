@@ -40,6 +40,8 @@
                 &bt BT_NXT
                 &out OUT_TOG
             >;
+
+            sensor-bindings = <&inc_dec_bt BT_NXT BT_PRV>;
         };
 
         dev_layer {
