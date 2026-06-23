@@ -35,7 +35,7 @@
             bindings = <
                 &to 3 
                 &bt BT_CLR
-                &bt BT_SEL 0
+                &bt BT_NXT
                 &out OUT_TOG
             >;
         };
