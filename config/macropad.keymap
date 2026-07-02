@@ -25,7 +25,7 @@
             bindings = <
                 &to 2
                 &kp X
-                &kp Y
+                &kp Z
                 &kp SPACE
             >;
 
