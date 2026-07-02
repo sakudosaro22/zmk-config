@@ -24,9 +24,9 @@
             label = "o3c";
             bindings = <
                 &to 2
-                &kp X
                 &kp Z
-                &kp SPACE
+                &kp Y
+                &kp ESC
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
